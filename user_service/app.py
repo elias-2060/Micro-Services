@@ -42,7 +42,7 @@ def get_friends(user_id):
         return {"error": "User not found"}, 404
 
     friend_links = Friend.query.filter_by(user_id=user_id).all()
-    friends = [User.query.get(f.friend_id).username for f in friend_links]
+    friends = [{"id": f.friend_id, "username": User.query.get(f.friend_id).username} for f in friend_links]
     return jsonify(friends)
 
 if __name__ == '__main__':

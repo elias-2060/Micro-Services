@@ -1,9 +1,9 @@
 import requests
-import time
 
 BASE_URL_USER_SERVICE = "http://localhost:5001"
 BASE_URL_WATCH_HISTORY_SERVICE = "http://localhost:5002"
 BASE_URL_RATING_SERVICE = "http://localhost:5003"
+BASE_URL_RECOMMENDATION_SERVICE = "http://localhost:5004"
 
 
 def print_title(title):
@@ -20,7 +20,6 @@ for name in users:
     data = response.json()
     print(f"Created user '{name}':", data)
     user_ids[name] = data.get("user_id")
-    time.sleep(0.3)
 
 # Add Friends
 print_title("Functionality 2: Add Friends")
@@ -31,7 +30,6 @@ response = requests.post(
     json={"friend_id": user_ids['bob']}
 )
 print("Alice adds Bob:", response.json())
-time.sleep(0.3)
 
 # alice adds carol as a friend
 response = requests.post(
@@ -39,13 +37,11 @@ response = requests.post(
     json={"friend_id": user_ids['carol']},
 )
 print("Alice adds Carol:", response.json())
-time.sleep(0.3)
 
 # Get Alice's Friends
 print_title("List Friends of Alice")
 response = requests.get(f"{BASE_URL_USER_SERVICE}/users/{user_ids['alice']}/friends/")
 print("Alice's friends:", response.json())
-time.sleep(0.3)
 
 # Add Movies to Watch History
 print_title("Functionality 3: Add Movies to Watch History")
@@ -55,21 +51,30 @@ response = requests.post(
     f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['alice']}/101/",
 )
 print("Alice watches movie 101:", response.json())
-time.sleep(0.3)
+
+# User bob watches movie with ID 102
+response = requests.post(
+    f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['bob']}/101/",
+)
+print("Bob watches movie 101:", response.json())
 
 # User bob watches movie with ID 102
 response = requests.post(
     f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['bob']}/102/",
 )
 print("Bob watches movie 102:", response.json())
-time.sleep(0.3)
 
 # User carol watches movie with ID 103
 response = requests.post(
     f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['carol']}/103/",
 )
 print("Carol watches movie 103:", response.json())
-time.sleep(0.3)
+
+# User carol watches movie with ID 103
+response = requests.post(
+    f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['carol']}/104/",
+)
+print("Carol watches movie 104:", response.json())
 
 # Get Watch History for Users
 print_title("Get Watch History for Users")
@@ -77,17 +82,14 @@ print_title("Get Watch History for Users")
 # Get Alice's watch history
 response = requests.get(f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['alice']}/")
 print("Alice's watch history:", response.json())
-time.sleep(0.3)
 
 # Get Bob's watch history
 response = requests.get(f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['bob']}/")
 print("Bob's watch history:", response.json())
-time.sleep(0.3)
 
 # Get Carol's watch history
 response = requests.get(f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['carol']}/")
 print("Carol's watch history:", response.json())
-time.sleep(0.3)
 
 # Rate Movies
 print_title("Functionality 4: Rate Movies")
@@ -97,14 +99,32 @@ response = requests.post(
     json={"score": 9}
 )
 print("Alice rates movie 101 with score 9:", response.json())
-time.sleep(0.3)
+
+response = requests.post(
+    f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['bob']}/101/",
+    json={"score": 7}
+)
+print("Bob rates movie 101 with score 7:", response.json())
 
 response = requests.post(
     f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['bob']}/102/",
     json={"score": 8}
 )
 print("Bob rates movie 102 with score 8:", response.json())
-time.sleep(0.3)
+
+response = requests.post(
+    f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['carol']}/103/",
+    json={"score": 9}
+)
+print("Carol rates movie 103 with score 9:", response.json())
+
+response = requests.post(
+    f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['carol']}/104/",
+    json={"score": 6}
+)
+print("Carol rates movie 104 with score 6:", response.json())
+
+
 
 # Agree/Disagree with Ratings
 print_title("Functionality 5: React to Ratings")
@@ -114,22 +134,28 @@ response = requests.post(
     json={"reactor_id": user_ids['bob']}
 )
 print("Bob agrees with Alice's rating on movie 101:", response.json())
-time.sleep(0.3)
 
 response = requests.post(
     f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['bob']}/102/disagree",
     json={"reactor_id": user_ids['carol']}
 )
 print("Carol disagrees with Bob's rating on movie 102:", response.json())
-time.sleep(0.3)
 
 # Get Ratings with Reactions
 print_title("Functionality 6: Get Ratings for Users")
 
 response = requests.get(f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['alice']}/")
 print("Alice's ratings:", response.json())
-time.sleep(0.3)
 
 response = requests.get(f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['bob']}/")
 print("Bob's ratings:", response.json())
-time.sleep(0.3)
+
+# Top-rated Movie Recommendations
+print_title("Functionality 7: Top-Rated Movie Recommendations")
+response = requests.get(f"{BASE_URL_RECOMMENDATION_SERVICE}/recommend/top/{user_ids['alice']}/")
+print("Top recommendations for Alice:", response.json())
+
+# Friends watched movie Recommendations
+print_title("Functionality 8: Friends-Based Movie Recommendations")
+response = requests.get(f"{BASE_URL_RECOMMENDATION_SERVICE}/recommend/friends/{user_ids['alice']}/")
+print("Friend-based recommendations for Alice:", response.json())

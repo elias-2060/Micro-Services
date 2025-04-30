@@ -28,14 +28,16 @@ start_service() {
   podman build -t $name $path
 
   echo "🚀 Running $name on port $port..."
-  podman run -d --name ${name}_container -p ${port}:${port} $name
+  podman run -d --name ${name}_container -p ${port}:${port} --network host $name
 }
 
 start_service user_service 5001 ./user_service
 start_service watch_history_service 5002 ./watch_history_service
 start_service rating_service 5003 ./rating_service
+start_service recommendation_service 5004 ./recommendation_service
 
 echo "✅ All services are running:
-- http://localhost:5001 (user_service)
-- http://localhost:5002 (watch_history_service)
-- http://localhost:5003 (rating_service)"
+- http://localhost:5001 (user service)
+- http://localhost:5002 (watch history service)
+- http://localhost:5003 (rating service)
+- http://localhost:5004 (Recommendation Service)"
