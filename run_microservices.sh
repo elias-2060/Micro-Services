@@ -1,46 +1,41 @@
 #!/bin/bash
 
 # Ensure Podman machine is running
-echo "Checking Podman machine status..."
+echo "🔍 Checking Podman machine status..."
 if ! podman info > /dev/null 2>&1; then
-    echo "Podman machine is not running. Attempting to start..."
+    echo "⚠️ Podman machine is not running. Starting it now..."
     podman machine start
     if [ $? -ne 0 ]; then
-        echo "❌ Failed to start Podman machine. Please check your installation."
+        echo "❌ Failed to start Podman machine."
         exit 1
     fi
-    echo "✅ Podman machine started successfully."
+    echo "✅ Podman machine started."
 else
     echo "✅ Podman is already running."
 fi
 
-# Stop and remove any existing containers
-podman stop user_service_container 2>/dev/null
-podman rm user_service_container 2>/dev/null
-podman stop watch_history_service_container 2>/dev/null
-podman rm watch_history_service_container 2>/dev/null
+# Function to stop and run containers
+start_service() {
+  name=$1
+  port=$2
+  path=$3
 
-# Build the user_service container
-echo "🔧 Building user_service..."
-podman build -t user_service ./user_service
+  echo "🔁 Restarting $name..."
+  podman stop ${name}_container 2>/dev/null
+  podman rm ${name}_container 2>/dev/null
 
-# Build the watch_history_service container
-echo "🔧 Building watch_history_service..."
-podman build -t watch_history_service ./watch_history_service
+  echo "🔧 Building $name..."
+  podman build -t $name $path
 
-# Run the user_service container
-echo "🚀 Running user_service on port 5001..."
-podman run -d \
-  --name user_service_container \
-  -p 5001:5001 \
-  user_service
+  echo "🚀 Running $name on port $port..."
+  podman run -d --name ${name}_container -p ${port}:${port} $name
+}
 
-# Run the watchhistory_service container
-echo "🚀 Running watchhistory_service on port 5002..."
-podman run -d \
-  --name watch_history_service_container \
-  -p 5002:5002 \
-  watch_history_service
+start_service user_service 5001 ./user_service
+start_service watch_history_service 5002 ./watch_history_service
+start_service rating_service 5003 ./rating_service
 
-echo "✅ User Service is up and running at http://localhost:5001"
-echo "✅ Watch History Service is up and running at http://localhost:5002"
+echo "✅ All services are running:
+- http://localhost:5001 (user_service)
+- http://localhost:5002 (watch_history_service)
+- http://localhost:5003 (rating_service)"
