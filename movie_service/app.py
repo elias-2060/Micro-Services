@@ -5,7 +5,7 @@ from json import dumps, loads
 
 import pandas as pd
 
-data = pd.read_csv('./Top_10000_Movies_IMDb.csv')
+data = pd.read_csv('Top_10000_Movies_IMDb.csv')
 data = data[['ID', 'Movie Name', 'Rating', 'Runtime', 'Genre', 'Metascore', 'Plot']]
 
 app = Flask("activity")
@@ -35,3 +35,6 @@ class MoviesResource(Resource):
 
 api.add_resource(MovieResource, '/movie/<int:id>/')
 api.add_resource(MoviesResource, '/movies/')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5006)

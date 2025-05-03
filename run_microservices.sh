@@ -35,9 +35,14 @@ start_service user_service 5001 ./user_service
 start_service watch_history_service 5002 ./watch_history_service
 start_service rating_service 5003 ./rating_service
 start_service recommendation_service 5004 ./recommendation_service
+start_service newsfeed_service 5005 ./newsfeed_service
+start_service movie_service 5006 ./movie_service
 
 echo "✅ All services are running:
 - http://localhost:5001 (user service)
 - http://localhost:5002 (watch history service)
 - http://localhost:5003 (rating service)
-- http://localhost:5004 (Recommendation Service)"
+- http://localhost:5004 (Recommendation Service)
+- http://localhost:5005 (Newsfeed Service)
+- http://localhost:5006 (Movie Service)"
+

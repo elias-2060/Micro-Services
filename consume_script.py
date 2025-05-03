@@ -4,6 +4,8 @@ BASE_URL_USER_SERVICE = "http://localhost:5001"
 BASE_URL_WATCH_HISTORY_SERVICE = "http://localhost:5002"
 BASE_URL_RATING_SERVICE = "http://localhost:5003"
 BASE_URL_RECOMMENDATION_SERVICE = "http://localhost:5004"
+BASE_URL_NEWSFEED_SERVICE = "http://localhost:5005"
+BASE_URL_MOVIE_SERVICE = "http://localhost:5006"
 
 
 def print_title(title):
@@ -159,3 +161,22 @@ print("Top recommendations for Alice:", response.json())
 print_title("Functionality 8: Friends-Based Movie Recommendations")
 response = requests.get(f"{BASE_URL_RECOMMENDATION_SERVICE}/recommend/friends/{user_ids['alice']}/")
 print("Friend-based recommendations for Alice:", response.json())
+
+# Newsfeed: Latest movies watched by friends
+print_title("Functionality 9: Newsfeed - Latest Movies Watched by Friends")
+
+response = requests.get(f"{BASE_URL_NEWSFEED_SERVICE}/newsfeed/{user_ids['alice']}/")
+print("Newsfeed for Alice:", response.json())
+
+# Movie Service Functionality
+print_title("Functionality 10: Get Movie Information")
+
+# Get single movie by ID
+print("\nGet movie with ID 101:")
+response = requests.get(f"{BASE_URL_MOVIE_SERVICE}/movie/101/")
+print(response.json())
+
+# Get list of movies
+print("\nGet first 5 movies:")
+response = requests.get(f"{BASE_URL_MOVIE_SERVICE}/movies/?start=0&count=5")
+print(response.json())
