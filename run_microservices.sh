@@ -1,48 +1,31 @@
 #!/bin/bash
 
-# Ensure Podman machine is running
-echo "🔍 Checking Podman machine status..."
-if ! podman info > /dev/null 2>&1; then
-    echo "⚠️ Podman machine is not running. Starting it now..."
-    podman machine start
-    if [ $? -ne 0 ]; then
-        echo "❌ Failed to start Podman machine."
-        exit 1
-    fi
-    echo "✅ Podman machine started."
-else
-    echo "✅ Podman is already running."
+# Check if Podman is installed and working
+echo "🔍 Checking Podman..."
+if ! command -v podman > /dev/null; then
+    echo "❌ Podman is not installed. Please install Podman first."
+    exit 1
 fi
 
-# Function to stop and run containers
-start_service() {
-  name=$1
-  port=$2
-  path=$3
+if ! podman info > /dev/null 2>&1; then
+    echo "❌ Podman is not functioning correctly. Check permissions or installation."
+    exit 1
+fi
 
-  echo "🔁 Restarting $name..."
-  podman stop ${name}_container 2>/dev/null
-  podman rm ${name}_container 2>/dev/null
+echo "✅ Podman is ready."
 
-  echo "🔧 Building $name..."
-  podman build -t $name $path
+# Stop and remove existing containers
+echo "🛑 Stopping and removing existing containers..."
+podman-compose down
 
-  echo "🚀 Running $name on port $port..."
-  podman run -d --name ${name}_container -p ${port}:${port} --network host $name
-}
-
-start_service user_service 5001 ./user_service
-start_service watch_history_service 5002 ./watch_history_service
-start_service rating_service 5003 ./rating_service
-start_service recommendation_service 5004 ./recommendation_service
-start_service newsfeed_service 5005 ./newsfeed_service
-start_service movie_service 5006 ./movie_service
+# Build and start services
+echo "🚀 Starting services with Podman..."
+podman-compose up -d --build
 
 echo "✅ All services are running:
-- http://localhost:5001 (user service)
-- http://localhost:5002 (watch history service)
-- http://localhost:5003 (rating service)
-- http://localhost:5004 (Recommendation Service)
-- http://localhost:5005 (Newsfeed Service)
-- http://localhost:5006 (Movie Service)"
-
+- http://user_service:5001 (user service)
+- http://watch_history_service:5002 (watch history service)
+- http://rating_service:5003 (rating service)
+- http://recommendation_service:5004 (Recommendation Service)
+- http://newsfeed_service:5005 (Newsfeed Service)
+- http://movie_service:5006 (Movie Service)"

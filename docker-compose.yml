@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  user_service:
+    build: ./user_service
+    ports:
+      - "5001:5001"
+    networks:
+      - microservices_network
+
+  watch_history_service:
+    build: ./watch_history_service
+    ports:
+      - "5002:5002"
+    networks:
+      - microservices_network
+
+  rating_service:
+    build: ./rating_service
+    ports:
+      - "5003:5003"
+    networks:
+      - microservices_network
+
+  recommendation_service:
+    build: ./recommendation_service
+    ports:
+      - "5004:5004"
+    networks:
+      - microservices_network
+    depends_on:
+      - user_service
+      - watch_history_service
+      - rating_service
+
+  newsfeed_service:
+    build: ./newsfeed_service
+    ports:
+      - "5005:5005"
+    networks:
+      - microservices_network
+    depends_on:
+      - user_service
+      - watch_history_service
+
+  movie_service:
+    build: ./movie_service
+    ports:
+      - "5006:5006"
+    networks:
+      - microservices_network
+    volumes:
+      - ./movie_service/Top_10000_Movies_IMDb.csv:/app/Top_10000_Movies_IMDb.csv
+
+networks:
+  microservices_network:
+    driver: bridge

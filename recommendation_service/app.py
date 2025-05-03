@@ -4,9 +4,9 @@ from collections import defaultdict
 
 app = Flask(__name__)
 
-USER_SERVICE = "http://localhost:5001"
-WATCH_SERVICE = "http://localhost:5002"
-RATING_SERVICE = "http://localhost:5003"
+USER_SERVICE = "http://user_service:5001"
+WATCH_SERVICE = "http://watch_history_service:5002"
+RATING_SERVICE = "http://rating_service:5003"
 
 @app.route('/recommend/top/<int:user_id>/', methods=['GET'])
 

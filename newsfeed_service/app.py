@@ -4,15 +4,15 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-USER_SERVICE_URL = "http://localhost:5001"
-WATCH_HISTORY_SERVICE_URL = "http://localhost:5002"
+USER_SERVICE = "http://user_service:5001"
+WATCH_SERVICE = "http://watch_history_service:5002"
 
 
 @app.route('/newsfeed/<int:user_id>/', methods=['GET'])
 def get_newsfeed(user_id):
     try:
         # 1. Get user's friends
-        friends_response = requests.get(f"{USER_SERVICE_URL}/users/{user_id}/friends/")
+        friends_response = requests.get(f"{USER_SERVICE}/users/{user_id}/friends/")
         if friends_response.status_code != 200:
             return jsonify({"error": "Failed to fetch friends"}), 500
 
@@ -25,7 +25,7 @@ def get_newsfeed(user_id):
         for friend in friends:
             friend_id = friend["id"]
             try:
-                history_response = requests.get(f"{WATCH_HISTORY_SERVICE_URL}/watch/{friend_id}/")
+                history_response = requests.get(f"{WATCH_SERVICE}/watch/{friend_id}/")
                 if history_response.status_code == 200:
                     friend_history = history_response.json()
                     # Only include recent watches (last 7 days)
