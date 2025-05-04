@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Newsfeed Service API
+  version: 1.0.0
+  description: |
+    This service builds a newsfeed of recent movies watched by a user's friends
+    (within the last 7 days), sorted newest first and limited to 20 items.
+
+servers:
+  - url: http://localhost:5005
+
+paths:
+  /newsfeed/{user_id}/:
+    get:
+      summary: Get a user's newsfeed
+      tags:
+        - Newsfeed
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+          description: ID of the user whose newsfeed to retrieve
+      responses:
+        '200':
+          description: User's newsfeed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  newsfeed:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        friend_id:
+                          type: integer
+                          example: 2
+                        friend_username:
+                          type: string
+                          example: janedoe
+                        movie_id:
+                          type: integer
+                          example: 15
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: "2025-05-01T12:34:56Z"
+        '200':
+          description: No friends found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: No friends found
+                  newsfeed:
+                    type: array
+                    items: {}
+        '500':
+          description: Failed to fetch data or internal error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Failed to fetch friends

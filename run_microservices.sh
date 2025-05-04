@@ -29,3 +29,5 @@ echo "✅ All services are running:
 - http://recommendation_service:5004 (Recommendation Service)
 - http://newsfeed_service:5005 (Newsfeed Service)
 - http://movie_service:5006 (Movie Service)"
+
+echo "🌐 Swagger UI available at  http://localhost:5000/apidocs/"

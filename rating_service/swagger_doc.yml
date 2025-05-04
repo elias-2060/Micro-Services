@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: Rating Service API
+  version: 1.0.0
+  description: |
+    This service allows users to rate movies and react to other users' ratings.
+    Users can submit ratings (1–10), agree or disagree with others' ratings, and view their own ratings with reaction counts.
+
+servers:
+  - url: http://localhost:5003
+
+paths:
+  /rate/{user_id}/{movie_id}/:
+    post:
+      summary: Rate a movie
+      tags:
+        - Ratings
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: movie_id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - score
+              properties:
+                score:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+                  example: 8
+      responses:
+        '201':
+          description: Rating submitted or updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Rated movie 3 with score 8
+        '400':
+          description: Invalid score value
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Score must be between 1 and 10
+
+  /rate/{user_id}/{movie_id}/agree:
+    post:
+      summary: Agree with a user's movie rating
+      tags:
+        - Reactions
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: movie_id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reactor_id
+              properties:
+                reactor_id:
+                  type: integer
+                  example: 2
+      responses:
+        '201':
+          description: Reaction saved or updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Agreed with rating
+        '400':
+          description: Invalid reaction endpoint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid reaction endpoint
+
+  /rate/{user_id}/{movie_id}/disagree:
+    post:
+      summary: Disagree with a user's movie rating
+      tags:
+        - Reactions
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: movie_id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reactor_id
+              properties:
+                reactor_id:
+                  type: integer
+                  example: 3
+      responses:
+        '201':
+          description: Reaction saved or updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Disagreed with rating
+        '400':
+          description: Invalid reaction endpoint
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid reaction endpoint
+
+  /rate/{user_id}/:
+    get:
+      summary: Get all ratings submitted by a user
+      tags:
+        - Ratings
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of ratings with reaction counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    movie_id:
+                      type: integer
+                      example: 3
+                    score:
+                      type: integer
+                      example: 9
+                    agrees:
+                      type: integer
+                      example: 5
+                    disagrees:
+                      type: integer
+                      example: 2
