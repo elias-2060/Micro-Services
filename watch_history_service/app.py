@@ -2,10 +2,17 @@ from flask import Flask, request, jsonify
 from models import db, WatchHistory
 from database import init_db
 from datetime import datetime
+from flasgger import Swagger
+import yaml
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///watchhistory.db'
 init_db(app)
+
+# Add Swagger configuration
+with open("watch_service_swagger.yml", "r") as f:
+    swagger_template = yaml.safe_load(f)
+swagger = Swagger(app, template=swagger_template)
 
 @app.route('/watch/<int:user_id>/<int:movie_id>/', methods=['POST'])
 def add_watch(user_id, movie_id):

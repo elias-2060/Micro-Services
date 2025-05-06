@@ -1,0 +1,130 @@
+swagger: "2.0"
+info:
+  title: User Service API
+  version: "1.0.0"
+  description: API for managing users and their friendships
+
+host: localhost:5001
+basePath: /
+schemes:
+  - http
+
+paths:
+  /users/:
+    post:
+      tags:
+        - Users
+      summary: Create a new user
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - username
+            properties:
+              username:
+                type: string
+                example: johndoe
+      responses:
+        201:
+          description: User successfully created
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: User created
+              user_id:
+                type: integer
+                example: 1
+        400:
+          description: Username is missing
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: username is required
+
+  /users/{user_id}/friends/:
+    post:
+      tags:
+        - Friends
+      summary: Add a friend to the user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user adding a friend
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - friend_id
+            properties:
+              friend_id:
+                type: integer
+                example: 2
+      responses:
+        201:
+          description: Friend successfully added
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Friend added
+        200:
+          description: Users are already friends
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Already friends
+        404:
+          description: One or both users not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: User or friend not found
+
+    get:
+      tags:
+        - Friends
+      summary: Get a user's friends
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user whose friends to retrieve
+      responses:
+        200:
+          description: List of user's friends
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 2
+                username:
+                  type: string
+                  example: janedoe
+        404:
+          description: User not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: User not found

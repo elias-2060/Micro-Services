@@ -2,6 +2,8 @@ from flask_restful import Resource, Api, reqparse
 from flask import Flask
 from flask import request as flask_request
 from json import dumps, loads
+from flasgger import Swagger
+import yaml
 
 import pandas as pd
 
@@ -10,6 +12,11 @@ data = data[['ID', 'Movie Name', 'Rating', 'Runtime', 'Genre', 'Metascore', 'Plo
 
 app = Flask("activity")
 api = Api(app)
+
+# Add Swagger configuration
+with open("movie_service_swagger.yml", "r") as f:
+    swagger_template = yaml.safe_load(f)
+swagger = Swagger(app, template=swagger_template)
 
 def get_movie_by_id(id:int):
     return data[data['ID'] == id].to_json(orient='records')  # Assumes that ID is unique

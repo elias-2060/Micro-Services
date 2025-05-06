@@ -1,10 +1,17 @@
 from flask import Flask, request, jsonify
 from models import db, Rating, Reaction
 from database import init_db
+from flasgger import Swagger
+import yaml
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ratings.db'
 init_db(app)
+
+# Add Swagger configuration
+with open("rating_service_swagger.yml", "r") as f:
+    swagger_template = yaml.safe_load(f)
+swagger = Swagger(app, template=swagger_template)
 
 @app.route('/rate/<int:user_id>/<int:movie_id>/', methods=['POST'])
 def rate_movie(user_id, movie_id):

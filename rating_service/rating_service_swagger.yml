@@ -1,0 +1,155 @@
+swagger: "2.0"
+info:
+  title: Rating Service API
+  version: "1.0.0"
+  description: API for managing movie ratings and reactions
+
+host: localhost:5003
+basePath: /
+schemes:
+  - http
+
+paths:
+  /rate/{user_id}/{movie_id}/:
+    post:
+      tags:
+        - Ratings
+      summary: Rate a movie
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user rating the movie
+        - name: movie_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the movie being rated
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - score
+            properties:
+              score:
+                type: integer
+                example: 8
+                description: Rating between 1 and 10
+      responses:
+        201:
+          description: Movie rated
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Rated movie 1 with score 8
+
+  /rate/{user_id}/{movie_id}/agree:
+    post:
+      tags:
+        - Ratings
+      summary: Agree with a rating
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user agreeing
+        - name: movie_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the movie
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - reactor_id
+            properties:
+              reactor_id:
+                type: integer
+                example: 2
+      responses:
+        201:
+          description: Agreed with rating
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Agreed with rating
+
+  /rate/{user_id}/{movie_id}/disagree:
+    post:
+      tags:
+        - Ratings
+      summary: Disagree with a rating
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user disagreeing
+        - name: movie_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the movie
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - reactor_id
+            properties:
+              reactor_id:
+                type: integer
+                example: 3
+      responses:
+        201:
+          description: Disagreed with rating
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Disagreed with rating
+
+  /rate/{user_id}/:
+    get:
+      tags:
+        - Ratings
+      summary: Get a user's ratings
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user
+      responses:
+        200:
+          description: List of user's ratings with reactions
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                movie_id:
+                  type: integer
+                  example: 1
+                score:
+                  type: integer
+                  example: 8
+                agrees:
+                  type: integer
+                  example: 5
+                disagrees:
+                  type: integer
+                  example: 2

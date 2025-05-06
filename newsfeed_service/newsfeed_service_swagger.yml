@@ -1,0 +1,47 @@
+swagger: "2.0"
+info:
+  title: Newsfeed Service API
+  version: "1.0.0"
+  description: API for user newsfeed
+
+host: localhost:5005
+basePath: /
+schemes:
+  - http
+
+paths:
+  /newsfeed/{user_id}/:
+    get:
+      tags:
+        - Newsfeed
+      summary: Get newsfeed of recent movies watched by friends
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user requesting the newsfeed
+      responses:
+        200:
+          description: List of recent movies watched by friends
+          schema:
+            type: object
+            properties:
+              newsfeed:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    friend_id:
+                      type: integer
+                      example: 2
+                    friend_username:
+                      type: string
+                      example: janedoe
+                    movie_id:
+                      type: integer
+                      example: 1
+                    timestamp:
+                      type: string
+                      format: date-time
+                      example: "2025-05-01T10:00:00Z"

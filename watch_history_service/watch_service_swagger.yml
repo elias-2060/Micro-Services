@@ -1,0 +1,64 @@
+swagger: "2.0"
+info:
+  title: Watch History Service API
+  version: "1.0.0"
+  description: API for managing user watch history
+
+host: localhost:5002
+basePath: /
+schemes:
+  - http
+
+paths:
+  /watch/{user_id}/{movie_id}/:
+    post:
+      tags:
+        - Watch History
+      summary: Add a movie to the user's watch history
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user
+        - name: movie_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the movie
+      responses:
+        201:
+          description: Movie added to watch history
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Movie 1 added to user 1's history
+
+  /watch/{user_id}/:
+    get:
+      tags:
+        - Watch History
+      summary: Get a user's watch history
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user
+      responses:
+        200:
+          description: List of user's watch history
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                movie_id:
+                  type: integer
+                  example: 1
+                timestamp:
+                  type: string
+                  format: date-time
+                  example: "2025-05-01T10:00:00Z"

@@ -1,0 +1,98 @@
+swagger: "2.0"
+info:
+  title: Movie Service API
+  version: "1.0.0"
+  description: API for movie information
+
+host: localhost:5006
+basePath: /
+schemes:
+  - http
+
+paths:
+  /movie/{id}/:
+    get:
+      tags:
+        - Movies
+      summary: Get movie by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          description: ID of the movie
+      responses:
+        200:
+          description: Movie details
+          schema:
+            type: object
+            properties:
+              ID:
+                type: integer
+                example: 1
+              Movie Name:
+                type: string
+                example: The Shawshank Redemption
+              Rating:
+                type: number
+                format: float
+                example: 9.3
+              Runtime:
+                type: string
+                example: "142 min"
+              Genre:
+                type: string
+                example: Drama
+              Metascore:
+                type: integer
+                example: 80
+              Plot:
+                type: string
+                example: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
+
+  /movies/:
+    get:
+      tags:
+        - Movies
+      summary: Get a list of movies
+      parameters:
+        - name: start
+          in: query
+          required: false
+          type: integer
+          example: 0
+        - name: count
+          in: query
+          required: false
+          type: integer
+          example: 50
+      responses:
+        200:
+          description: List of movies
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                ID:
+                  type: integer
+                  example: 1
+                Movie Name:
+                  type: string
+                  example: The Shawshank Redemption
+                Rating:
+                  type: number
+                  format: float
+                  example: 9.3
+                Runtime:
+                  type: string
+                  example: "142 min"
+                Genre:
+                  type: string
+                  example: Drama
+                Metascore:
+                  type: integer
+                  example: 80
+                Plot:
+                  type: string
+                  example: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."

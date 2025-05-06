@@ -1,10 +1,17 @@
 from flask import Flask, request, jsonify
 from models import db, User, Friend
 from database import init_db
+from flasgger import Swagger
+import yaml
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 init_db(app)
+
+# Add Swagger configuration
+with open("user_service_swagger.yml", "r") as f:
+    swagger_template = yaml.safe_load(f)
+swagger = Swagger(app, template=swagger_template)
 
 @app.route('/users/', methods=['POST'])
 def create_user():

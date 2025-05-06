@@ -1,8 +1,16 @@
 from flask import Flask, jsonify
 import requests
 from datetime import datetime, timedelta
+from flasgger import Swagger
+import yaml
 
 app = Flask(__name__)
+
+# Add Swagger configuration
+with open("newsfeed_service_swagger.yml", "r") as f:
+    swagger_template = yaml.safe_load(f)
+swagger = Swagger(app, template=swagger_template)
+
 
 USER_SERVICE = "http://user_service:5001"
 WATCH_SERVICE = "http://watch_history_service:5002"

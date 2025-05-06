@@ -7,6 +7,8 @@ services:
       - "5001:5001"
     networks:
       - microservices_network
+    volumes:
+      - ./user_service/user_service_swagger.yml:/app/user_service_swagger.yml:ro
 
   watch_history_service:
     build: ./watch_history_service
@@ -14,6 +16,8 @@ services:
       - "5002:5002"
     networks:
       - microservices_network
+    volumes:
+      - ./watch_history_service/watch_service_swagger.yml:/app/watch_service_swagger.yml:ro
 
   rating_service:
     build: ./rating_service
@@ -21,6 +25,8 @@ services:
       - "5003:5003"
     networks:
       - microservices_network
+    volumes:
+      - ./rating_service/rating_service_swagger.yml:/app/rating_service_swagger.yml:ro
 
   recommendation_service:
     build: ./recommendation_service
@@ -32,6 +38,8 @@ services:
       - user_service
       - watch_history_service
       - rating_service
+    volumes:
+      - ./recommendation_service/recommendation_service_swagger.yml:/app/recommendation_service_swagger.yml:ro
 
   newsfeed_service:
     build: ./newsfeed_service
@@ -42,6 +50,8 @@ services:
     depends_on:
       - user_service
       - watch_history_service
+    volumes:
+      - ./newsfeed_service/newsfeed_service_swagger.yml:/app/newsfeed_service_swagger.yml:ro
 
   movie_service:
     build: ./movie_service
@@ -51,6 +61,7 @@ services:
       - microservices_network
     volumes:
       - ./movie_service/Top_10000_Movies_IMDb.csv:/app/Top_10000_Movies_IMDb.csv
+      - ./movie_service/movie_service_swagger.yml:/app/movie_service_swagger.yml:ro
 
   api_gateway:
     build: ./api_gateway
@@ -60,7 +71,6 @@ services:
       - microservices_network
     volumes:
       - ./api_gateway/swagger_docs.yml:/app/swagger_docs.yml:ro
-
 
 networks:
   microservices_network:

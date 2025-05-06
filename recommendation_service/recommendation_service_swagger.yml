@@ -1,0 +1,61 @@
+swagger: "2.0"
+info:
+  title: Recommendation Service API
+  version: "1.0.0"
+  description: API for movie recommendations
+
+host: localhost:5004
+basePath: /
+schemes:
+  - http
+
+paths:
+  /recommend/top/{user_id}/:
+    get:
+      tags:
+        - Recommendations
+      summary: Get top rated movies
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user requesting recommendations
+      responses:
+        200:
+          description: List of top rated movies
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                movie_id:
+                  type: integer
+                  example: 1
+                avg_score:
+                  type: number
+                  format: float
+                  example: 8.5
+
+  /recommend/friends/{user_id}/:
+    get:
+      tags:
+        - Recommendations
+      summary: Recommend movies watched by friends
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user requesting recommendations
+      responses:
+        200:
+          description: List of recommended movies
+          schema:
+            type: object
+            properties:
+              recommendations:
+                type: array
+                items:
+                  type: integer
+                  example: 1
