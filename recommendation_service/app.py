@@ -15,10 +15,25 @@ USER_SERVICE = "http://user_service:5001"
 WATCH_SERVICE = "http://watch_history_service:5002"
 RATING_SERVICE = "http://rating_service:5003"
 
+
+def user_exists(user_id):
+    """Check if user exists by calling user service.
+
+    Returns:
+        (exists: bool, status_code: int or None)
+    """
+    try:
+        response = requests.get(f"{USER_SERVICE}/users/{user_id}")
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False, None  # None indicates request failed
+
 @app.route('/recommend/top/<int:user_id>/', methods=['GET'])
 
 @app.route('/recommend/top/<int:user_id>/', methods=['GET'])
 def top_rated(user_id):
+    if not user_exists(user_id):
+        return {"error": f"User with ID {user_id} not found"}, 404
     all_scores = defaultdict(list)
 
     # Try user IDs 1 to 20
@@ -44,6 +59,8 @@ def top_rated(user_id):
 
 @app.route('/recommend/friends/<int:user_id>/', methods=['GET'])
 def friends_unseen(user_id):
+    if not user_exists(user_id):
+        return {"error": f"User with ID {user_id} not found"}, 404
     # 1. Get user's friends
     friends = requests.get(f"{USER_SERVICE}/users/{user_id}/friends/").json()
 

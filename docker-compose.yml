@@ -16,6 +16,9 @@ services:
       - "5002:5002"
     networks:
       - microservices_network
+    depends_on:
+      - user_service
+      - movie_service
     volumes:
       - ./watch_history_service/watch_service_swagger.yml:/app/watch_service_swagger.yml:ro
 
@@ -25,6 +28,9 @@ services:
       - "5003:5003"
     networks:
       - microservices_network
+    depends_on:
+      - user_service
+      - movie_service
     volumes:
       - ./rating_service/rating_service_swagger.yml:/app/rating_service_swagger.yml:ro
 
@@ -38,6 +44,7 @@ services:
       - user_service
       - watch_history_service
       - rating_service
+      - movie_service
     volumes:
       - ./recommendation_service/recommendation_service_swagger.yml:/app/recommendation_service_swagger.yml:ro
 
@@ -50,6 +57,7 @@ services:
     depends_on:
       - user_service
       - watch_history_service
+      - movie_service
     volumes:
       - ./newsfeed_service/newsfeed_service_swagger.yml:/app/newsfeed_service_swagger.yml:ro
 
@@ -62,15 +70,6 @@ services:
     volumes:
       - ./movie_service/Top_10000_Movies_IMDb.csv:/app/Top_10000_Movies_IMDb.csv
       - ./movie_service/movie_service_swagger.yml:/app/movie_service_swagger.yml:ro
-
-  api_gateway:
-    build: ./api_gateway
-    ports:
-      - "5000:5000"
-    networks:
-      - microservices_network
-    volumes:
-      - ./api_gateway/swagger_docs.yml:/app/swagger_docs.yml:ro
 
 networks:
   microservices_network:

@@ -172,8 +172,8 @@ print("Newsfeed for Alice:", response.json())
 print_title("Functionality 10: Get Movie Information")
 
 # Get single movie by ID
-print("\nGet movie with ID 101:")
-response = requests.get(f"{BASE_URL_MOVIE_SERVICE}/movie/101/")
+print("\nGet movie with ID 76:")
+response = requests.get(f"{BASE_URL_MOVIE_SERVICE}/movie/76/")
 print(response.json())
 
 # Get list of movies

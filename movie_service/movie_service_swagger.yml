@@ -49,6 +49,14 @@ paths:
               Plot:
                 type: string
                 example: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
+        404:
+          description: Movie not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Movie with ID 999 not found"
 
   /movies/:
     get:
@@ -61,11 +69,13 @@ paths:
           required: false
           type: integer
           example: 0
+          description: Starting index (0-based)
         - name: count
           in: query
           required: false
           type: integer
           example: 50
+          description: Number of movies to return
       responses:
         200:
           description: List of movies
@@ -96,3 +106,19 @@ paths:
                 Plot:
                   type: string
                   example: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency."
+        400:
+          description: Invalid parameters
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Start parameter cannot be negative"
+        404:
+          description: No movies found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Start parameter exceeds dataset size"

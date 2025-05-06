@@ -13,6 +13,7 @@ with open("user_service_swagger.yml", "r") as f:
     swagger_template = yaml.safe_load(f)
 swagger = Swagger(app, template=swagger_template)
 
+
 @app.route('/users/', methods=['POST'])
 def create_user():
     data = request.json
@@ -20,27 +21,46 @@ def create_user():
     if not username:
         return {"error": "username is required"}, 400
 
+    # Check if username already exists
+    if User.query.filter_by(username=username).first():
+        return {"error": "Username already exists"}, 409
+
     user = User(username=username)
     db.session.add(user)
     db.session.commit()
     return {"message": "User created", "user_id": user.id}, 201
+
 
 @app.route('/users/<int:user_id>/friends/', methods=['POST'])
 def add_friend(user_id):
     data = request.json
     friend_id = data.get('friend_id')
 
-    if not User.query.get(user_id) or not User.query.get(friend_id):
+    if not friend_id:
+        return {"error": "friend_id is required"}, 400
+
+    user = User.query.get(user_id)
+    friend = User.query.get(friend_id)
+
+    if not user or not friend:
         return {"error": "User or friend not found"}, 404
+
+    if user_id == friend_id:
+        return {"error": "Cannot add yourself as a friend"}, 400
 
     existing = Friend.query.filter_by(user_id=user_id, friend_id=friend_id).first()
     if existing:
         return {"message": "Already friends"}, 200
 
-    friendship = Friend(user_id=user_id, friend_id=friend_id)
-    db.session.add(friendship)
+    # Add bidirectional friendship
+    friendship1 = Friend(user_id=user_id, friend_id=friend_id)
+    friendship2 = Friend(user_id=friend_id, friend_id=user_id)
+
+    db.session.add(friendship1)
+    db.session.add(friendship2)
     db.session.commit()
     return {"message": f"Friend added"}, 201
+
 
 @app.route('/users/<int:user_id>/friends/', methods=['GET'])
 def get_friends(user_id):
@@ -49,8 +69,20 @@ def get_friends(user_id):
         return {"error": "User not found"}, 404
 
     friend_links = Friend.query.filter_by(user_id=user_id).all()
-    friends = [{"id": f.friend_id, "username": User.query.get(f.friend_id).username} for f in friend_links]
+    friends = []
+    for f in friend_links:
+        friend_user = User.query.get(f.friend_id)
+        if friend_user:  # Only include if friend exists
+            friends.append({"id": f.friend_id, "username": friend_user.username})
     return jsonify(friends)
+
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return {"error": "User not found"}, 404
+    return {"id": user.id, "username": user.username}, 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)

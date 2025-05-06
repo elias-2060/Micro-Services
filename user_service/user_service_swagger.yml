@@ -47,6 +47,46 @@ paths:
               error:
                 type: string
                 example: username is required
+        409:
+          description: Username already exists
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Username already exists
+
+  /users/{user_id}:
+    get:
+      tags:
+        - Users
+      summary: Get a user by ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user to retrieve
+      responses:
+        200:
+          description: User information
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              username:
+                type: string
+                example: johndoe
+        404:
+          description: User not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: User not found
 
   /users/{user_id}/friends/:
     post:
@@ -87,6 +127,14 @@ paths:
               message:
                 type: string
                 example: Already friends
+        400:
+          description: Invalid request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Cannot add yourself as a friend
         404:
           description: One or both users not found
           schema:

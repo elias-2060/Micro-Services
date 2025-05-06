@@ -35,6 +35,14 @@ paths:
               message:
                 type: string
                 example: Movie 1 added to user 1's history
+        404:
+          description: User or movie not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: User with ID 999 not found
 
   /watch/{user_id}/:
     get:
@@ -62,3 +70,11 @@ paths:
                   type: string
                   format: date-time
                   example: "2025-05-01T10:00:00Z"
+        404:
+          description: User not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: User with ID 999 not found

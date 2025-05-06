@@ -30,4 +30,4 @@ echo "✅ All services are running:
 - http://newsfeed_service:5005 (Newsfeed Service)
 - http://movie_service:5006 (Movie Service)"
 
-echo "🌐 Swagger UI available at  http://localhost:5000/apidocs/"
+echo "🌐 Swagger UI available for each microservice at their respective urls /apidocs"

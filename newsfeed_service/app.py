@@ -15,10 +15,25 @@ swagger = Swagger(app, template=swagger_template)
 USER_SERVICE = "http://user_service:5001"
 WATCH_SERVICE = "http://watch_history_service:5002"
 
+def user_exists(user_id):
+    """Check if user exists by calling user service.
+
+    Returns:
+        (exists: bool, status_code: int or None)
+    """
+    try:
+        response = requests.get(f"{USER_SERVICE}/users/{user_id}")
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        return False, None  # None indicates request failed
+
 
 @app.route('/newsfeed/<int:user_id>/', methods=['GET'])
 def get_newsfeed(user_id):
     try:
+        if not user_exists(user_id):
+            return {"error": f"User with ID {user_id} not found"}, 404
+
         # 1. Get user's friends
         friends_response = requests.get(f"{USER_SERVICE}/users/{user_id}/friends/")
         if friends_response.status_code != 200:
