@@ -23,11 +23,11 @@ echo "🚀 Starting services with Podman..."
 podman-compose up -d --build
 
 echo "✅ All services are running:
-- http://user_service:5001 (user service)
-- http://watch_history_service:5002 (watch history service)
-- http://rating_service:5003 (rating service)
-- http://recommendation_service:5004 (Recommendation Service)
-- http://newsfeed_service:5005 (Newsfeed Service)
-- http://movie_service:5006 (Movie Service)"
+- http://localhost:5001 (user service)
+- http://localhost:5002 (watch history service)
+- http://localhost:5003 (rating service)
+- http://localhost:5004 (Recommendation Service)
+- http://localhost:5005 (Newsfeed Service)
+- http://localhost:5006 (Movie Service)"
 
 echo "🌐 Swagger UI available for each microservice at their respective urls /apidocs"
