@@ -1,14 +1,77 @@
 version: '3.8'
 
 services:
+  user_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: users
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  watch_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: watch
+    volumes:
+      - watch_data:/var/lib/postgresql/data
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  rating_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ratings
+    volumes:
+      - rating_data:/var/lib/postgresql/data
+    networks:
+      - microservices_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   user_service:
     build: ./user_service
     ports:
       - "5001:5001"
     networks:
       - microservices_network
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@user_db:5432/users"
+    depends_on:
+      user_db:
+        condition: service_healthy
     volumes:
       - ./user_service/user_service_swagger.yml:/app/user_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/users/1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
   watch_history_service:
     build: ./watch_history_service
@@ -16,11 +79,24 @@ services:
       - "5002:5002"
     networks:
       - microservices_network
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@watch_db:5432/watch"
     depends_on:
-      - user_service
-      - movie_service
+      user_service:
+        condition: service_healthy
+      movie_service:
+        condition: service_healthy
+      watch_db:
+        condition: service_healthy
     volumes:
       - ./watch_history_service/watch_service_swagger.yml:/app/watch_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/watch/1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
   rating_service:
     build: ./rating_service
@@ -28,11 +104,24 @@ services:
       - "5003:5003"
     networks:
       - microservices_network
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@rating_db:5432/ratings"
     depends_on:
-      - user_service
-      - movie_service
+      user_service:
+        condition: service_healthy
+      movie_service:
+        condition: service_healthy
+      rating_db:
+        condition: service_healthy
     volumes:
       - ./rating_service/rating_service_swagger.yml:/app/rating_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/rate/1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
   recommendation_service:
     build: ./recommendation_service
@@ -41,12 +130,23 @@ services:
     networks:
       - microservices_network
     depends_on:
-      - user_service
-      - watch_history_service
-      - rating_service
-      - movie_service
+      user_service:
+        condition: service_healthy
+      watch_history_service:
+        condition: service_healthy
+      rating_service:
+        condition: service_healthy
+      movie_service:
+        condition: service_healthy
     volumes:
       - ./recommendation_service/recommendation_service_swagger.yml:/app/recommendation_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/recommend/top/1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
   newsfeed_service:
     build: ./newsfeed_service
@@ -55,11 +155,21 @@ services:
     networks:
       - microservices_network
     depends_on:
-      - user_service
-      - watch_history_service
-      - movie_service
+      user_service:
+        condition: service_healthy
+      watch_history_service:
+        condition: service_healthy
+      movie_service:
+        condition: service_healthy
     volumes:
       - ./newsfeed_service/newsfeed_service_swagger.yml:/app/newsfeed_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/newsfeed/1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
 
   movie_service:
     build: ./movie_service
@@ -70,7 +180,20 @@ services:
     volumes:
       - ./movie_service/Top_10000_Movies_IMDb.csv:/app/Top_10000_Movies_IMDb.csv
       - ./movie_service/movie_service_swagger.yml:/app/movie_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5006/movie/1/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
 
 networks:
   microservices_network:
     driver: bridge
+
+volumes:
+  user_data:
+  watch_data:
+  rating_data:
