@@ -1,12 +1,14 @@
 from flask_restful import Resource, Api, reqparse
 from flask import Flask
 from flask import request as flask_request
+from flask_cors import CORS
 from json import dumps, loads
 from flasgger import Swagger
 import yaml
 import pandas as pd
 
 app = Flask("activity")
+CORS(app, origins=["http://localhost:3000"])
 api = Api(app)
 
 # Load movie data

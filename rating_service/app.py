@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from models import db, Rating, Reaction
 from database import init_db
 from flasgger import Swagger
@@ -6,6 +7,7 @@ import yaml
 import requests
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ratings.db'
 init_db(app)
 

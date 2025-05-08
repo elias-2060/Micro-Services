@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import requests
 from datetime import datetime, timedelta
 from flasgger import Swagger
 import yaml
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 
 # Add Swagger configuration
 with open("newsfeed_service_swagger.yml", "r") as f:

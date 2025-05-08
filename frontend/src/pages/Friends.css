@@ -1,0 +1,105 @@
+.users-page {
+  background-color: #1e1e1e;
+  color: #f5f5f5;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.user-friends-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #2c2c2c;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.user-friends-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #ffffff;
+}
+
+.friend-list {
+  list-style: none;
+  padding: 0;
+}
+
+.friend-item {
+  background-color: #3a3a3a;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  color: #ffffff;
+  transition: transform 0.2s;
+}
+
+.friend-item:hover {
+  transform: scale(1.02);
+  background-color: #4b4b4b;
+}
+
+.friend-message {
+  text-align: center;
+  color: #cccccc;
+  margin-top: 1rem;
+}
+
+.friend-input {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.friend-input input {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #2b2b2b;
+  color: #fff;
+}
+
+.friend-input button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #00b894;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.friend-input button:hover {
+  background-color: #00a884;
+}
+
+.status-message {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: bold;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.status-success {
+  color: #00e676;
+}
+
+.status-error {
+  color: #ff5252;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

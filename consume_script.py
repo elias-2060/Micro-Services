@@ -12,16 +12,39 @@ def print_title(title):
     print(f"\n{'='*10} {title} {'='*10}")
 
 
-# Create Users
-print_title("Functionality 1: Create Users")
-users = ['alice', 'bob', 'carol']
+# Create Friends
+print_title("Functionality 1: Create Friends")
+users = {
+    'alice': 'password123',
+    'bob': 'secure456',
+    'carol': 'pass789'
+}
 user_ids = {}
 
-for name in users:
-    response = requests.post(f"{BASE_URL_USER_SERVICE}/users/", json={"username": name})
+for name, password in users.items():
+    # Create user
+    response = requests.post(f"{BASE_URL_USER_SERVICE}/users/", json={
+        "username": name,
+        "password": password
+    })
     data = response.json()
     print(f"Created user '{name}':", data)
-    user_ids[name] = data.get("user_id")
+
+    user_id = data.get("user_id")
+    if user_id:
+        user_ids[name] = user_id
+    else:
+        # If user exists already or error, attempt to log in
+        print(f"Trying login for existing user '{name}'...")
+        login_resp = requests.post(f"{BASE_URL_USER_SERVICE}/login", json={
+            "username": name,
+            "password": password
+        })
+        login_data = login_resp.json()
+        print(f"Login response: {login_data}")
+        if login_resp.status_code == 200:
+            user_ids[name] = login_data["user_id"]
+
 
 # Add Friends
 print_title("Functionality 2: Add Friends")
@@ -78,8 +101,8 @@ response = requests.post(
 )
 print("Carol watches movie 104:", response.json())
 
-# Get Watch History for Users
-print_title("Get Watch History for Users")
+# Get Watch History for Friends
+print_title("Get Watch History for Friends")
 
 # Get Alice's watch history
 response = requests.get(f"{BASE_URL_WATCH_HISTORY_SERVICE}/watch/{user_ids['alice']}/")
@@ -144,7 +167,7 @@ response = requests.post(
 print("Carol disagrees with Bob's rating on movie 102:", response.json())
 
 # Get Ratings with Reactions
-print_title("Functionality 6: Get Ratings for Users")
+print_title("Functionality 6: Get Ratings for Friends")
 
 response = requests.get(f"{BASE_URL_RATING_SERVICE}/rate/{user_ids['alice']}/")
 print("Alice's ratings:", response.json())

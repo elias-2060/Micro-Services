@@ -13,7 +13,7 @@ paths:
   /users/:
     post:
       tags:
-        - Users
+        - Friends
       summary: Create a new user
       parameters:
         - in: body
@@ -23,10 +23,14 @@ paths:
             type: object
             required:
               - username
+              - password
             properties:
               username:
                 type: string
                 example: johndoe
+              password:
+                type: string
+                example: mysecurepassword
       responses:
         201:
           description: User successfully created
@@ -40,13 +44,13 @@ paths:
                 type: integer
                 example: 1
         400:
-          description: Username is missing
+          description: Missing username or password
           schema:
             type: object
             properties:
               error:
                 type: string
-                example: username is required
+                example: username and password are required
         409:
           description: Username already exists
           schema:
@@ -59,7 +63,7 @@ paths:
   /users/{user_id}:
     get:
       tags:
-        - Users
+        - Friends
       summary: Get a user by ID
       parameters:
         - name: user_id
@@ -120,7 +124,7 @@ paths:
                 type: string
                 example: Friend added
         200:
-          description: Users are already friends
+          description: Friends are already friends
           schema:
             type: object
             properties:
@@ -176,3 +180,53 @@ paths:
               error:
                 type: string
                 example: User not found
+
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Log in with username and password
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            type: object
+            required:
+              - username
+              - password
+            properties:
+              username:
+                type: string
+                example: johndoe
+              password:
+                type: string
+                example: mysecurepassword
+      responses:
+        200:
+          description: Login successful
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Login successful
+              user_id:
+                type: integer
+                example: 1
+        400:
+          description: Missing username or password
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: username and password are required
+        401:
+          description: Invalid credentials
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid credentials

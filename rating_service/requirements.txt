@@ -2,3 +2,4 @@ Flask
 flask_sqlalchemy
 flasgger
 requests
+flask-cors

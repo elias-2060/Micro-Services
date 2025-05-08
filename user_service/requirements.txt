@@ -1,3 +1,6 @@
 Flask
 flask_sqlalchemy
 flasgger
+flask-cors
+PyYAML
+Werkzeug

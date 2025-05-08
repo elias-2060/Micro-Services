@@ -3,3 +3,4 @@ flask_restful
 requests
 pandas
 flasgger
+flask-cors

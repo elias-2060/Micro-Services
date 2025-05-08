@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from models import db, User, Friend
 from database import init_db
 from flasgger import Swagger
 import yaml
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 init_db(app)
 
@@ -18,14 +20,17 @@ swagger = Swagger(app, template=swagger_template)
 def create_user():
     data = request.json
     username = data.get('username')
-    if not username:
-        return {"error": "username is required"}, 400
+    password = data.get('password')
 
-    # Check if username already exists
+    if not username or not password:
+        return {"error": "username and password are required"}, 400
+
     if User.query.filter_by(username=username).first():
         return {"error": "Username already exists"}, 409
 
     user = User(username=username)
+    user.set_password(password)  # Hash the password
+
     db.session.add(user)
     db.session.commit()
     return {"message": "User created", "user_id": user.id}, 201
@@ -82,6 +87,21 @@ def get_user(user_id):
     if not user:
         return {"error": "User not found"}, 404
     return {"id": user.id, "username": user.username}, 200
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return {"error": "username and password are required"}, 400
+
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.check_password(password):
+        return {"error": "Invalid username or password"}, 401
+
+    return {"message": "Login successful", "user_id": user.id}, 200
 
 
 if __name__ == '__main__':
