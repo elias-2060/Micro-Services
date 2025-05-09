@@ -128,6 +128,22 @@ def get_ratings(user_id):
         })
     return jsonify(result)
 
+@app.route('/reactions/<int:reactor_id>', methods=['GET'])
+def get_user_reactions(reactor_id):
+    if not user_exists(reactor_id):
+        return {"error": f"User with ID {reactor_id} not found"}, 404
+
+    reactions = Reaction.query.filter_by(reactor_id=reactor_id).all()
+    result = [
+        {
+            "user_id": r.user_id,
+            "movie_id": r.movie_id,
+            "reaction_type": r.reaction_type
+        }
+        for r in reactions
+    ]
+    return jsonify(result)
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5003)

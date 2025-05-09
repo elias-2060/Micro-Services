@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import MovieList from '../components/MovieList';
-import './Movies.css';
+import '../styles/Movies.css';
 
 const Movies: React.FC = () => {
   return (

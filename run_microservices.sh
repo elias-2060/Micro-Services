@@ -8,7 +8,7 @@ if ! command -v podman > /dev/null; then
 fi
 
 if ! podman info > /dev/null 2>&1; then
-    echo "❌ Podman is not functioning correctly. Check permissions or installation."
+    echo "❌ Podman is not running or functioning correctly. Check permissions or installation."
     exit 1
 fi
 

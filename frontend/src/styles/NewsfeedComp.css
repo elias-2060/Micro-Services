@@ -1,20 +1,27 @@
-.movie-list-container {
+.newsfeed-wrapper {
   padding: 2rem;
   font-family: Arial, sans-serif;
-  background-color: #121212;
+  background-color: #f9f9f9;
   min-height: 100vh;
-  color: #eee;
+  color: #222;
 }
 
-.title {
-  font-size: 2.5rem;
+.newsfeed-header {
+  font-size: 2.8rem;
   font-weight: bold;
   margin-bottom: 2rem;
   text-align: center;
-  color: #f2f2f2;
+  color: #1a1a1a;
 }
 
-.movie-grid {
+.newsfeed-error {
+  color: red;
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.newsfeed-card-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
@@ -24,78 +31,80 @@
   max-width: 1200px;
 }
 
-.movie-card {
-  background-color: #1e1e1e;
+.newsfeed-card {
+  background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  color: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   transition: transform 0.2s ease-in-out;
+  text-align: center;
 }
 
-.movie-card:hover {
+.newsfeed-card:hover {
   transform: translateY(-5px);
 }
 
-.movie-card h2 {
+.newsfeed-movie-title {
   font-size: 1.3rem;
   font-weight: bold;
   margin-bottom: 0.7rem;
 }
 
-.runtime {
-  color: #b0c4de;
+.newsfeed-runtime {
+  color: #555;
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
-.details {
+.newsfeed-genres {
   margin-bottom: 0.8rem;
 }
 
-.genre-badge {
+.newsfeed-genre-badge {
   display: inline-block;
-  background-color: #2a2a2a;
-  color: #f2f2f2;
+  background-color: #e3e3e3;
+  color: #333;
   padding: 0.3rem 0.6rem;
   border-radius: 5px;
   margin-right: 0.4rem;
   font-size: 0.75rem;
 }
 
-.rating {
+.newsfeed-ratings {
   font-size: 0.95rem;
   margin: 0.5rem 0;
 }
 
-.rating-score {
+.newsfeed-rating {
   color: #4caf50;
   font-weight: bold;
   margin-right: 0.7rem;
 }
 
-.metascore {
+.newsfeed-metascore {
   color: #2196f3;
   font-weight: bold;
 }
 
-.plot {
-  color: #ccc;
+.newsfeed-plot {
+  color: #444;
   font-size: 0.95rem;
   margin-top: 0.8rem;
   line-height: 1.4;
 }
 
-.loading,
-.error {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 1.1rem;
-}
-
-.error {
-  color: red;
+.newsfeed-meta-info {
+  margin-top: 1rem;
+  background-color: #e9f5ff;
+  color: #1b3a4b;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  max-width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }

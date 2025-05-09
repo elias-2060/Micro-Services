@@ -7,6 +7,8 @@ import RegisterPage from './pages/Register';
 import LoginPage from './pages/Login';
 import Home from './pages/Home';
 import LatestWatched from './pages/LatestWatched';
+import FriendRatings from "./pages/FriendRatings";
+import RecommendationPage from './pages/RecommendationPage'
 
 const App: React.FC = () => {
   return (
@@ -19,6 +21,8 @@ const App: React.FC = () => {
         <Route path="/newsfeed" element={<NewsfeedPage />} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/watched" element={<LatestWatched />} />
+        <Route path="/friend-ratings/:id" element={<FriendRatings />} />
+        <Route path="/recommendations" element={<RecommendationPage />} />
       </Routes>
     </Router>
   );

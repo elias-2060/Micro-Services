@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import UserFriends from '../components/UserFriends';
-import './Friends.css';
+import '../styles/Friends.css';
 
 const Friends: React.FC = () => {
   return (

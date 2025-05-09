@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { fetchFriends, addFriend  } from '../api/userApi';
-import './UserFriends.css'; // Import the CSS
+import { fetchFriends, addFriend } from '../api/userApi';
+import { useNavigate } from 'react-router-dom';
+import '../styles/UserFriends.css';
 
 const Users: React.FC = () => {
   const [friends, setFriends] = useState<{ id: number; username: string }[]>([]);
   const [friendId, setFriendId] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
+  const navigate = useNavigate();
 
   const storedUser = localStorage.getItem('user');
   const loggedInUser = storedUser ? JSON.parse(storedUser) : null;
 
   useEffect(() => {
-
-  if (loggedInUser?.id) {
-    fetchFriends(loggedInUser.id)
-      .then((res) => setFriends(res.data))
-      .catch(() => {
-        setMessage('Failed to fetch friends');
-        setMessageType('error');
-      });
-  } else {
-    setMessage('You are not logged in.');
-    setMessageType('error');
-  }
-}, []);
+    if (loggedInUser?.id) {
+      fetchFriends(loggedInUser.id)
+        .then((res) => setFriends(res.data))
+        .catch(() => {
+          setMessage('Failed to fetch friends');
+          setMessageType('error');
+        });
+    } else {
+      setMessage('You are not logged in.');
+      setMessageType('error');
+    }
+  }, []);
 
   const handleAddFriend = async () => {
     setMessage('');
@@ -41,7 +42,6 @@ const Users: React.FC = () => {
       setMessage(response.data.message);
       setMessageType('success');
       setFriendId('');
-      // Refresh friend list
       const updated = await fetchFriends(loggedInUser.id);
       setFriends(updated.data);
     } catch (error: any) {
@@ -61,11 +61,8 @@ const Users: React.FC = () => {
   return (
     <div className="users-container">
       <h1>Your Friends</h1>
-      {message && (
-        <div className={`message ${messageType}`}>
-          {message}
-        </div>
-      )}
+      {message && <div className={`message ${messageType}`}>{message}</div>}
+
       {friends.length === 0 ? (
         <p className="no-friends">You have no friends yet.</p>
       ) : (
@@ -73,6 +70,12 @@ const Users: React.FC = () => {
           {friends.map((friend) => (
             <div key={friend.id} className="friend-card">
               <strong>{friend.username}</strong> (ID: {friend.id})
+              <button
+                className="see-ratings-button"
+                onClick={() => navigate(`/friend-ratings/${friend.id}`)}
+              >
+                See friend's ratings
+              </button>
             </div>
           ))}
         </div>

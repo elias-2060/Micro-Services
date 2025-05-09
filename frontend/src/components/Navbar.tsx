@@ -1,17 +1,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import './Navbar.css';
+import '../styles/Navbar.css';
 
 const Navbar: React.FC = () => {
   const location = useLocation();
 
   return (
     <nav className="navbar">
-      <h1 className="navbar-title">🎬 NextFilm</h1>
+      <Link to="/home" className="navbar-title-link">
+        <h1 className="navbar-title">🎬 NextFilm</h1>
+      </Link>
       <ul className="navbar-links">
-        <li>
-          <Link to="/home" className={location.pathname === '/home' ? 'active' : ''}>Home</Link>
-        </li>
         <li>
           <Link to="/movies" className={location.pathname === '/movies' ? 'active' : ''}>Movies</Link>
         </li>
@@ -23,6 +22,9 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link to="/watched" className={location.pathname === '/watched' ? 'active' : ''}>Latest Watched</Link>
+        </li>
+        <li>
+          <Link to="/recommendations" className={location.pathname === '/recommendations' ? 'active' : ''}>Recommendations</Link>
         </li>
       </ul>
     </nav>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import Navbar from '../components/Navbar';
 import { fetchNewsfeed } from '../api/newsfeedApi';
-import './Newsfeed.css'; // Import the CSS file
+import { fetchMovieById } from '../api/movieApi';
+import '../styles/NewsfeedComp.css';
 
 interface NewsItem {
   friend_id: number;
@@ -9,30 +11,93 @@ interface NewsItem {
   timestamp: string;
 }
 
+interface Movie {
+  ID: number;
+  "Movie Name": string;
+  Genre: string;
+  Rating: number;
+  Runtime: string;
+  Metascore: number;
+  Plot: string;
+}
+
 const Newsfeed: React.FC = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
+  const [movies, setMovies] = useState<{ [movieId: number]: Movie }>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const userId = 1;
+    const storedUser = localStorage.getItem('user');
+    const loggedInUser = storedUser ? JSON.parse(storedUser) : null;
+    const userId = loggedInUser?.id;
+
+    if (!userId) {
+      setError("User not logged in");
+      return;
+    }
+
     fetchNewsfeed(userId)
-      .then((res) => setNews(res.data.newsfeed))
-      .catch(() => setError("Failed to load newsfeed"));
+      .then(async (res) => {
+        const items: NewsItem[] = res.data.newsfeed;
+        setNews(items);
+
+        const movieIdsArray = items.map((item) => item.movie_id);
+        const uniqueMovieIds = Array.from(new Set(movieIdsArray));
+
+        const movieDetails: { [movieId: number]: Movie } = {};
+
+        for (let i = 0; i < uniqueMovieIds.length; i++) {
+          const movieId = uniqueMovieIds[i];
+          try {
+            const res = await fetchMovieById(movieId);
+            const data = typeof res.data === 'string' ? JSON.parse(res.data) : res.data;
+            const movie = Array.isArray(data) ? data[0] : data;
+            movieDetails[movieId] = movie;
+          } catch {
+            continue;
+          }
+        }
+
+        setMovies(movieDetails);
+      })
+      .catch(() => setError('Failed to load newsfeed'));
   }, []);
 
   return (
-    <div className="newsfeed-container">
-      <h1 className="newsfeed-title">Newsfeed</h1>
-      {error && <p className="error-message">{error}</p>}
-      <ul className="newsfeed-list">
-        {news.map((item, idx) => (
-          <li key={idx} className="newsfeed-item">
-            <p><strong>{item.friend_username}</strong> watched movie ID {item.movie_id}</p>
-            <p className="newsfeed-meta">{new Date(item.timestamp).toLocaleString()}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <div className="newsfeed-wrapper">
+        <h1 className="newsfeed-header">Newsfeed</h1>
+        {error && <p className="newsfeed-error">{error}</p>}
+
+        <div className="newsfeed-card-container">
+          {news.map((item: NewsItem, index: number) => {
+            const movie = movies[item.movie_id];
+            if (!movie) return null;
+
+            return (
+              <div key={index} className="newsfeed-card">
+                <h2 className="newsfeed-movie-title">{movie["Movie Name"]}</h2>
+                <p className="newsfeed-runtime">{movie.Runtime}</p>
+                <div className="newsfeed-genres">
+                  {movie.Genre?.split(',').map((genre, i) => (
+                    <span key={i} className="newsfeed-genre-badge">{genre.trim()}</span>
+                  ))}
+                </div>
+                <p className="newsfeed-ratings">
+                  <span className="newsfeed-rating">Rating: {movie.Rating}</span>
+                  <span className="newsfeed-metascore">Metascore: {movie.Metascore}</span>
+                </p>
+                <p className="newsfeed-plot">{movie.Plot}</p>
+                <p className="newsfeed-meta-info">
+                  <strong>{item.friend_username}</strong> watched this on{' '}
+                  {new Date(item.timestamp).toLocaleString()}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </>
   );
 };
 

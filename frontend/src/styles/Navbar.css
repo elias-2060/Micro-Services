@@ -71,3 +71,12 @@
     opacity: 1;
   }
 }
+.navbar-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.navbar-title-link:hover .navbar-title {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}

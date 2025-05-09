@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { registerUser } from '../api/userApi';
-import './AuthForm.css';
+import '../styles/AuthForm.css';
 import { Link } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {

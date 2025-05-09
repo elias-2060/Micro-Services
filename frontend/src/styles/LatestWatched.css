@@ -1,0 +1,181 @@
+.movie-list-container {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  color: #222;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #222;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+.movie-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease-in-out;
+  text-align: center;
+}
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.movie-card h2 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.7rem;
+}
+
+.runtime {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.details {
+  margin-bottom: 0.8rem;
+}
+
+.genre-badge {
+  display: inline-block;
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  margin-right: 0.4rem;
+  font-size: 0.75rem;
+}
+
+.rating {
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+}
+
+.rating-score {
+  color: #388e3c;
+  font-weight: bold;
+  margin-right: 0.7rem;
+}
+
+.metascore {
+  color: #1976d2;
+  font-weight: bold;
+}
+
+.plot {
+  color: #444;
+  font-size: 0.95rem;
+  margin-top: 0.8rem;
+  line-height: 1.4;
+}
+
+.loading,
+.error {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: red;
+}
+
+.user-rating {
+  font-weight: bold;
+  color: #2b9348;
+  background-color: #d2f3db;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.reaction-counts {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+.agree-count,
+.disagree-count {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.reaction-counts span {
+  display: flex;
+  align-items: center;
+  background-color: #ddd;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: #111;
+}
+
+.rating-form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rating-form input[type="number"] {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 322px;
+  font-size: 1rem;
+  margin: 0 auto;
+}
+
+.rating-form button {
+  padding: 6px 10px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  width: 335px;
+  margin: 0 auto;
+}
+
+.rating-form button:hover {
+  background-color: #005fa3;
+}
+
+.rating-message {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 4px;
+}

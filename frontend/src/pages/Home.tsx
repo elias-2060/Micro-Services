@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import './Home.css';
+import '../styles/Home.css';
 
 const Home: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ const Home: React.FC = () => {
       <Navbar />
       <div className="home-page">
         <h1>Welcome to NextFilm</h1>
-        <p>Explore top-rated movies and see what your friends are watching.</p>
+        <p>Explore top-rated movies and see what your friends are watching and more.</p>
       </div>
     </>
   );

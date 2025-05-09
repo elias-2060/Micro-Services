@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { fetchMovies, fetchMovieById } from '../api/MovieApi';
-import { addToWatchHistory, fetchWatchHistory } from '../api/WatchApi';
-import './MovieList.css';
+import { fetchMovies } from '../api/movieApi';
+import { addToWatchHistory, fetchWatchHistory } from '../api/watchApi';
+import '../styles/MovieList.css';
 
 interface Movie {
   ID: number;
@@ -72,25 +72,25 @@ const MovieList: React.FC = () => {
   const handleNext = () => setCurrentPage((p) => p + 1);
 
   return (
-    <div className="movie-list-container">
-      <h1 className="title">Movies</h1>
-      {error && <p className="error">{error}</p>}
+    <div className="gallery-container">
+      <h1 className="gallery-title">Movies</h1>
+      {error && <p className="gallery-error">{error}</p>}
 
-      <ul className="movie-grid">
+      <ul className="gallery-grid">
         {movies.map((movie) => (
-          <li key={movie.ID} className="movie-card">
-            <h2>{movie["Movie Name"]}</h2>
-            <p className="runtime">{movie.Runtime}</p>
-            <div className="details">
+          <li key={movie.ID} className="gallery-card">
+            <h2 className="card-title">{movie["Movie Name"]}</h2>
+            <p className="card-runtime">{movie.Runtime}</p>
+            <div className="card-details">
               {movie.Genre.split(',').map((g, index) => (
                 <span key={index} className="genre-badge">{g.trim()}</span>
               ))}
             </div>
-            <p className="rating">
+            <p className="card-rating">
               <span className="rating-score">Rating: {movie.Rating}</span>
               <span className="metascore">Metascore: {movie.Metascore}</span>
             </p>
-            <p className="plot">{movie.Plot}</p>
+            <p className="card-plot">{movie.Plot}</p>
             <button
               className="watch-button"
               onClick={() => handleAddToWatchlist(movie.ID)}

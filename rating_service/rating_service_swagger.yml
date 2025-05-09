@@ -211,3 +211,43 @@ paths:
               error:
                 type: string
                 example: "User with ID 999 not found"
+
+  /reactions/{reactor_id}:
+    get:
+      tags:
+        - Reactions
+      summary: Get all reactions made by a user
+      parameters:
+        - name: reactor_id
+          in: path
+          required: true
+          type: integer
+          description: ID of the user who reacted to ratings
+      responses:
+        200:
+          description: List of reactions made by the user
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                  description: ID of the user who was rated
+                movie_id:
+                  type: integer
+                  example: 2
+                  description: ID of the movie
+                reaction_type:
+                  type: string
+                  enum: [agree, disagree]
+                  example: agree
+        404:
+          description: Reactor user not found
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "User with ID 999 not found"
