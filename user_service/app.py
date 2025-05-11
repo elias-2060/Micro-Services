@@ -6,11 +6,13 @@ from flasgger import Swagger
 import yaml
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000"])
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-init_db(app)
+CORS(app, origins=["http://localhost:3000"])  # Allow frontend requests
 
-# Add Swagger configuration
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+init_db(app)  # Initialize the database with your models
+
+# Swagger documentation setup
 with open("user_service_swagger.yml", "r") as f:
     swagger_template = yaml.safe_load(f)
 swagger = Swagger(app, template=swagger_template)
@@ -18,6 +20,10 @@ swagger = Swagger(app, template=swagger_template)
 
 @app.route('/users/', methods=['POST'])
 def create_user():
+    """
+    Register a new user.
+    Expects JSON with "username" and "password".
+    """
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -25,6 +31,7 @@ def create_user():
     if not username or not password:
         return {"error": "username and password are required"}, 400
 
+    # Check if user already exists
     if User.query.filter_by(username=username).first():
         return {"error": "Username already exists"}, 409
 
@@ -33,11 +40,25 @@ def create_user():
 
     db.session.add(user)
     db.session.commit()
+
     return {"message": "User created", "user_id": user.id}, 201
 
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    """
+    Get a user's basic info by ID.
+    """
+    user = User.query.get(user_id)
+    if not user:
+        return {"error": "User not found"}, 404
+    return {"id": user.id, "username": user.username}, 200
 
 @app.route('/users/<int:user_id>/friends/', methods=['POST'])
 def add_friend(user_id):
+    """
+    Add a friend relationship (bidirectional).
+    Expects JSON with "friend_id".
+    """
     data = request.json
     friend_id = data.get('friend_id')
 
@@ -53,43 +74,48 @@ def add_friend(user_id):
     if user_id == friend_id:
         return {"error": "Cannot add yourself as a friend"}, 400
 
+    # Prevent duplicate friendship
     existing = Friend.query.filter_by(user_id=user_id, friend_id=friend_id).first()
     if existing:
         return {"message": "Already friends"}, 200
 
-    # Add bidirectional friendship
+    # Create mutual friendships
     friendship1 = Friend(user_id=user_id, friend_id=friend_id)
     friendship2 = Friend(user_id=friend_id, friend_id=user_id)
 
     db.session.add(friendship1)
     db.session.add(friendship2)
     db.session.commit()
-    return {"message": f"Friend added"}, 201
-
+    return {"message": "Friend added"}, 201
 
 @app.route('/users/<int:user_id>/friends/', methods=['GET'])
 def get_friends(user_id):
+    """
+    Get a list of friends for the given user.
+    """
     user = User.query.get(user_id)
     if not user:
         return {"error": "User not found"}, 404
 
     friend_links = Friend.query.filter_by(user_id=user_id).all()
     friends = []
+
     for f in friend_links:
         friend_user = User.query.get(f.friend_id)
-        if friend_user:  # Only include if friend exists
-            friends.append({"id": f.friend_id, "username": friend_user.username})
-    return jsonify(friends)
+        if friend_user:
+            friends.append({
+                "id": f.friend_id,
+                "username": friend_user.username
+            })
 
-@app.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return {"error": "User not found"}, 404
-    return {"id": user.id, "username": user.username}, 200
+    return jsonify(friends)
 
 @app.route('/login', methods=['POST'])
 def login():
+    """
+    Login with username and password.
+    Returns user_id on success.
+    """
     data = request.json
     username = data.get('username')
     password = data.get('password')
