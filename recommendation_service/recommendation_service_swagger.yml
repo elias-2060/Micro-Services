@@ -10,7 +10,7 @@ schemes:
   - http
 
 paths:
-  /recommend/top/{user_id}/:
+  /recommendations/top/{user_id}/:
     get:
       tags:
         - Recommendations
@@ -53,7 +53,7 @@ paths:
                 type: string
                 example: "Failed to fetch ratings"
 
-  /recommend/friends/{user_id}/:
+  /recommendations/friends/{user_id}/:
     get:
       tags:
         - Recommendations
@@ -91,3 +91,29 @@ paths:
               error:
                 type: string
                 example: "Failed to fetch watch history"
+
+  /recommendations:
+    get:
+      tags:
+        - Recommendations
+      summary: Get random movie recommendations
+      description: Returns a list of 5 random movie IDs that have been rated by any user
+      responses:
+        200:
+          description: A list of randomly recommended movies
+          schema:
+            type: object
+            properties:
+              recommendations:
+                type: array
+                items:
+                  type: integer
+                  example: 12
+        500:
+          description: Internal server error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Failed to collect movie data"

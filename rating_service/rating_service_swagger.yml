@@ -3,14 +3,13 @@ info:
   title: Rating Service API
   version: "1.0.0"
   description: API for managing movie ratings and reactions
-
 host: localhost:5003
 basePath: /
 schemes:
   - http
 
 paths:
-  /rate/{user_id}/{movie_id}/:
+  /ratings/{user_id}/{movie_id}/:
     post:
       tags:
         - Ratings
@@ -36,50 +35,40 @@ paths:
             properties:
               score:
                 type: integer
+                minimum: 1
+                maximum: 10
                 example: 8
-                description: Rating between 1 and 10
+                description: Rating score (1-10)
       responses:
         201:
-          description: Movie rated
+          description: Movie rated successfully
           schema:
             type: object
             properties:
               message:
                 type: string
-                example: Rated movie 1 with score 8
+                example: "Rated movie 1 with score 8"
         400:
-          description: Invalid score
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Score must be between 1 and 10"
+          description: Invalid input
         404:
           description: User or movie not found
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "User with ID 999 not found"
 
-  /rate/{user_id}/{movie_id}/agree:
+  /ratings/{user_id}/{movie_id}/reaction:
     post:
       tags:
-        - Ratings
-      summary: Agree with a rating
+        - Reactions
+      summary: Add or update a reaction to a user's rating of a movie
       parameters:
         - name: user_id
           in: path
           required: true
           type: integer
-          description: ID of the user who made the original rating
+          description: ID of the user who rated the movie
         - name: movie_id
           in: path
           required: true
           type: integer
-          description: ID of the movie
+          description: ID of the movie that was rated
         - in: body
           name: body
           required: true
@@ -87,92 +76,33 @@ paths:
             type: object
             required:
               - reactor_id
+              - reaction-type
             properties:
               reactor_id:
                 type: integer
                 example: 2
-                description: ID of the user agreeing with the rating
+                description: ID of the user reacting
+              reaction-type:
+                type: string
+                enum: [agree, disagree]
+                example: 2
+                description: Reaction type (agree or disagree)
+
       responses:
         201:
-          description: Agreed with rating
+          description: Reaction added or updated
           schema:
             type: object
             properties:
               message:
                 type: string
-                example: Agreed with rating
+                example: "Agreed with rating"
         400:
-          description: Missing reactor_id
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "reactor_id is required"
+          description: Invalid input or missing fields
         404:
-          description: User, movie, or reactor not found
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Rating not found to react to"
+          description: User, movie, or rating not found
 
-  /rate/{user_id}/{movie_id}/disagree:
-    post:
-      tags:
-        - Ratings
-      summary: Disagree with a rating
-      parameters:
-        - name: user_id
-          in: path
-          required: true
-          type: integer
-          description: ID of the user who made the original rating
-        - name: movie_id
-          in: path
-          required: true
-          type: integer
-          description: ID of the movie
-        - in: body
-          name: body
-          required: true
-          schema:
-            type: object
-            required:
-              - reactor_id
-            properties:
-              reactor_id:
-                type: integer
-                example: 3
-                description: ID of the user disagreeing with the rating
-      responses:
-        201:
-          description: Disagreed with rating
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: Disagreed with rating
-        400:
-          description: Missing reactor_id
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "reactor_id is required"
-        404:
-          description: User, movie, or reactor not found
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "Rating not found to react to"
-
-  /rate/{user_id}/:
+  /ratings/{user_id}/:
     get:
       tags:
         - Ratings
@@ -185,7 +115,7 @@ paths:
           description: ID of the user
       responses:
         200:
-          description: List of user's ratings with reactions
+          description: List of ratings with reaction counts
           schema:
             type: array
             items:
@@ -205,14 +135,8 @@ paths:
                   example: 2
         404:
           description: User not found
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "User with ID 999 not found"
 
-  /reactions/{reactor_id}:
+  /reactions/{reactor_id}/:
     get:
       tags:
         - Reactions
@@ -222,10 +146,10 @@ paths:
           in: path
           required: true
           type: integer
-          description: ID of the user who reacted to ratings
+          description: ID of the reacting user
       responses:
         200:
-          description: List of reactions made by the user
+          description: List of reactions
           schema:
             type: array
             items:
@@ -233,21 +157,13 @@ paths:
               properties:
                 user_id:
                   type: integer
-                  example: 1
-                  description: ID of the user who was rated
+                  example: 3
                 movie_id:
                   type: integer
-                  example: 2
-                  description: ID of the movie
+                  example: 1
                 reaction_type:
                   type: string
                   enum: [agree, disagree]
                   example: agree
         404:
           description: Reactor user not found
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                example: "User with ID 999 not found"

@@ -45,7 +45,7 @@ def movie_exists(movie_id):
         return False, None  # None means request failed
 
 
-@app.route('/rate/<int:user_id>/<int:movie_id>/', methods=['POST'])
+@app.route('/ratings/<int:user_id>/<int:movie_id>/', methods=['POST'])
 def rate_movie(user_id, movie_id):
     if not user_exists(user_id):
         return {"error": f"User with ID {user_id} not found"}, 404
@@ -69,8 +69,7 @@ def rate_movie(user_id, movie_id):
     return {"message": f"Rated movie {movie_id} with score {score}"}, 201
 
 
-@app.route('/rate/<int:user_id>/<int:movie_id>/agree', methods=['POST'])
-@app.route('/rate/<int:user_id>/<int:movie_id>/disagree', methods=['POST'])
+@app.route('/ratings/<int:user_id>/<int:movie_id>/reaction', methods=['POST'])
 def react_to_rating(user_id, movie_id):
     if not user_exists(user_id):
         return {"error": f"User with ID {user_id} not found"}, 404
@@ -79,38 +78,40 @@ def react_to_rating(user_id, movie_id):
 
     data = request.json
     reactor_id = data.get('reactor_id')
+    reaction_type = data.get('reaction_type')
 
     if not reactor_id:
         return {"error": "reactor_id is required"}, 400
+    if not reaction_type:
+        return {"error": "'reaction-type' is required "}, 400
+    if reaction_type not in ['agree', 'disagree']:
+        return {"error": "Invalid reaction_type. Must be 'agree' or 'disagree'"}, 400
     if not user_exists(reactor_id):
         return {"error": f"Reactor with ID {reactor_id} not found"}, 404
 
-    # Check if the rating exists
+    # Find the rating
     rating = Rating.query.filter_by(user_id=user_id, movie_id=movie_id).first()
     if not rating:
         return {"error": "Rating not found to react to"}, 404
 
-    # Agree or Disagree ?
-    if request.path.endswith('/agree'):
-        reaction_type = 'agree'
-    elif request.path.endswith('/disagree'):
-        reaction_type = 'disagree'
-    else:
-        return {"error": "Invalid reaction endpoint"}, 400
-
-    # One reaction per user per rating
+    # Upsert reaction
     existing = Reaction.query.filter_by(user_id=user_id, movie_id=movie_id, reactor_id=reactor_id).first()
     if existing:
         existing.reaction_type = reaction_type
     else:
-        reaction = Reaction(user_id=user_id, movie_id=movie_id, reactor_id=reactor_id, reaction_type=reaction_type)
+        reaction = Reaction(
+            user_id=user_id,
+            movie_id=movie_id,
+            reactor_id=reactor_id,
+            reaction_type=reaction_type
+        )
         db.session.add(reaction)
 
     db.session.commit()
     return {"message": f"{reaction_type.title()}d with rating"}, 201
 
 
-@app.route('/rate/<int:user_id>/', methods=['GET'])
+@app.route('/ratings/<int:user_id>/', methods=['GET'])
 def get_ratings(user_id):
     if not user_exists(user_id):
         return {"error": f"User with ID {user_id} not found"}, 404

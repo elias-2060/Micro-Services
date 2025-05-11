@@ -50,7 +50,7 @@ def get_newsfeed(user_id):
         for friend in friends:
             friend_id = friend["id"]
             try:
-                history_response = requests.get(f"{WATCH_SERVICE}/watch/{friend_id}/")
+                history_response = requests.get(f"{WATCH_SERVICE}/watch_history/{friend_id}/")
                 if history_response.status_code == 200:
                     friend_history = history_response.json()
                     # Only include recent watches (last 7 days)

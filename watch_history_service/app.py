@@ -44,7 +44,7 @@ def movie_exists(movie_id):
     except requests.exceptions.RequestException:
         return False, None  # None means request failed
 
-@app.route('/watch/<int:user_id>/<int:movie_id>/', methods=['POST'])
+@app.route('/watch_history/<int:user_id>/<int:movie_id>/', methods=['POST'])
 def add_watch(user_id, movie_id):
     if not user_exists(user_id):
         return {"error": f"User with ID {user_id} not found"}, 404
@@ -56,7 +56,7 @@ def add_watch(user_id, movie_id):
     db.session.commit()
     return {"message": f"Movie {movie_id} added to user {user_id}'s history"}, 201
 
-@app.route('/watch/<int:user_id>/', methods=['GET'])
+@app.route('/watch_history/<int:user_id>/', methods=['GET'])
 def get_watch_history(user_id):
     if not user_exists(user_id):
         return {"error": f"User with ID {user_id} not found"}, 404
