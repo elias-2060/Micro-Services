@@ -190,10 +190,105 @@ The application has been decomposed into the following microservices, with each 
 4. **Graceful Degradation**
    - Recommendation service has fallback to random movies when dependencies fail
 
-## Conclusion
+## 4. Extension Requirements Implementation
 
-The architecture cleanly separates concerns while enabling complex features through coordinated service interactions. The decomposition allows:
-- Independent scaling of high-demand features (e.g., Newsfeed vs Recommendations)
-- Isolated failure domains
-- Clear ownership of data models
-- Flexible enhancement of individual features without system-wide changes
+### 4.1 Advanced Docker Features
+
+**Implemented:**
+1. **Persistent Storage**
+   - Configured named volumes for all PostgreSQL databases:
+     ```yaml
+     volumes:
+       user_data:
+       watch_data: 
+       rating_data:
+     ```
+   - Ensures data survives container restarts
+   - Allows for database backups and migrations
+
+2. **Dedicated Network**
+   - Created isolated bridge network:
+     ```yaml
+     networks:
+       microservices_network:
+         driver: bridge
+     ```
+   - Improves security and service discovery
+   - Enables containers to communicate using service names
+
+3. **Health Checks**
+   - Implemented for all services:
+     ```yaml
+     healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:5001/users/1"]
+       interval: 30s
+       timeout: 10s
+       retries: 3
+     ```
+   - Ensures dependent services only start when required services are healthy
+   - Provides automatic failure detection
+
+**Educational Value:**
+- Learned Docker volume management for stateful services
+- Understood network isolation principles
+- Implemented production-grade health monitoring
+
+### 4.2 Fault-Resistant Communication
+
+**Implemented:**
+1. **Circuit Breaker Pattern**
+   - Services implement request timeouts:
+     ```python
+     try:
+         response = requests.get(f"{USER_SERVICE}/users/{user_id}", timeout=3)
+     except requests.exceptions.Timeout:
+         return False
+     ```
+   - Prevents cascading failures from hanging requests
+
+2. **Graceful Degradation**
+   - Recommendation service falls back to random movies when dependencies fail
+   - Newsfeed service returns cached data if available during outages
+
+3. **Automatic Restarts**
+   - Configured in docker-compose:
+     ```yaml
+     restart: unless-stopped
+     ```
+   - Services automatically recover from crashes
+
+**Educational Value:**
+- Learned resilience patterns for distributed systems
+- Implemented practical fault tolerance mechanisms
+- Gained experience with partial failure handling
+
+### 4.3 Frontend Integration
+
+**Implemented:**
+1. **React Frontend**
+   - Created a simple UI with:
+     - User registration/login
+     - Movie browsing
+     - Friend management
+     - Rating interface
+   - Separate container running on port 3000
+   - Communicates with backend via REST API
+
+2. **API Documentation**
+   - Integrated Flasgger for interactive API docs
+   - Accessible at `/apidocs` on each service
+3. **Run Frontend**
+   - You can run the front end by running the **run_frontend.sh** script
+   - Make sure the microservices are running first by running the script **run_microservices.sh**
+
+**Educational Value:**
+- Learned modern frontend-backend integration
+- Practiced React state management with microservices
+- Implemented comprehensive API documentation
+
+**Screenshot of the page movies**
+![frontendPic](assets/frontendPic.png)
+**Screenshot of the page friends**
+![frontendPic](assets/frontendPic2.png)
+**Screenshot of the page friends watchlist**
+![frontendPic](assets/frontendPic3.png)
