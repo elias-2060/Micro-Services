@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VENV_DIR=".venv"
+
 # Check if Podman is installed and working
 echo "🔍 Checking Podman..."
 if ! command -v podman > /dev/null; then
@@ -14,6 +16,19 @@ fi
 
 echo "✅ Podman is ready."
 
+# Set up Python virtual environment
+if [ ! -d "$VENV_DIR" ]; then
+    echo "📦 Creating Python virtual environment at $VENV_DIR..."
+    python3 -m venv "$VENV_DIR"
+    source "$VENV_DIR/bin/activate"
+    echo "⬇️ Installing podman-compose..."
+    pip install --upgrade pip
+    pip install podman-compose
+else
+    echo "📂 Activating existing virtual environment at $VENV_DIR..."
+    source "$VENV_DIR/bin/activate"
+fi
+
 # Stop and remove existing containers
 echo "🛑 Stopping and removing existing containers..."
 podman-compose down
@@ -23,11 +38,11 @@ echo "🚀 Starting services with Podman..."
 podman-compose up -d --build
 
 echo "✅ All services are running:
-- http://localhost:5001 (user service)
-- http://localhost:5002 (watch history service)
-- http://localhost:5003 (rating service)
+- http://localhost:5001 (User Service)
+- http://localhost:5002 (Watch History Service)
+- http://localhost:5003 (Rating Service)
 - http://localhost:5004 (Recommendation Service)
 - http://localhost:5005 (Newsfeed Service)
-- http://localhost:5006 (Movie Service)"
+- http://localhost:5006 (Movie Service)
 
-echo "🌐 Swagger UI available for each microservice at their respective urls /apidocs"
+🌐 Swagger UI available for each microservice at their respective URLs /apidocs"
