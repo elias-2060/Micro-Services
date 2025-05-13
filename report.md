@@ -286,9 +286,11 @@ The application has been decomposed into the following microservices, with each 
 - Practiced React state management with microservices
 - Implemented comprehensive API documentation
 
-**Screenshot of the page movies**
+**Screenshot of the page Movies**
 ![frontendPic](assets/frontendPic.png)
-**Screenshot of the page friends**
+**Screenshot of the page Friends**
 ![frontendPic](assets/frontendPic2.png)
-**Screenshot of the page friends watchlist**
+**Screenshot of the page friends Watchlist**
 ![frontendPic](assets/frontendPic3.png)
+**Screenshot of the page Newsfeed**
+![frontendPic](assets/frontendPic4.png)
