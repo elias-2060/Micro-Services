@@ -20,6 +20,10 @@ with open("rating_service_swagger.yml", "r") as f:
     swagger_template = yaml.safe_load(f)
 swagger = Swagger(app, template=swagger_template)
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return 'OK', 200
+
 def user_exists(user_id):
     """Check if a user exists using the User microservice."""
     try:

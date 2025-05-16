@@ -18,6 +18,10 @@ swagger = Swagger(app, template=swagger_template)
 USER_SERVICE = "http://user_service:5001"
 WATCH_SERVICE = "http://watch_history_service:5002"
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return 'OK', 200
+
 def user_exists(user_id):
     """
     Check if a user exists by calling the User microservice.

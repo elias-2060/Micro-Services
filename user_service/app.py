@@ -17,6 +17,9 @@ with open("user_service_swagger.yml", "r") as f:
     swagger_template = yaml.safe_load(f)
 swagger = Swagger(app, template=swagger_template)
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return 'OK', 200
 
 @app.route('/users/', methods=['POST'])
 def create_user():

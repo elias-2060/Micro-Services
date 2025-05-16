@@ -66,105 +66,7 @@ services:
     volumes:
       - ./user_service/user_service_swagger.yml:/app/user_service_swagger.yml:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5001/users/1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-
-  watch_history_service:
-    build: ./watch_history_service
-    ports:
-      - "5002:5002"
-    networks:
-      - microservices_network
-    environment:
-      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@watch_db:5432/watch"
-    depends_on:
-      user_service:
-        condition: service_healthy
-      movie_service:
-        condition: service_healthy
-      watch_db:
-        condition: service_healthy
-    volumes:
-      - ./watch_history_service/watch_service_swagger.yml:/app/watch_service_swagger.yml:ro
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5002/watch/1/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-
-  rating_service:
-    build: ./rating_service
-    ports:
-      - "5003:5003"
-    networks:
-      - microservices_network
-    environment:
-      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@rating_db:5432/ratings"
-    depends_on:
-      user_service:
-        condition: service_healthy
-      movie_service:
-        condition: service_healthy
-      rating_db:
-        condition: service_healthy
-    volumes:
-      - ./rating_service/rating_service_swagger.yml:/app/rating_service_swagger.yml:ro
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5003/rate/1/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-
-  recommendation_service:
-    build: ./recommendation_service
-    ports:
-      - "5004:5004"
-    networks:
-      - microservices_network
-    depends_on:
-      user_service:
-        condition: service_healthy
-      watch_history_service:
-        condition: service_healthy
-      rating_service:
-        condition: service_healthy
-      movie_service:
-        condition: service_healthy
-    volumes:
-      - ./recommendation_service/recommendation_service_swagger.yml:/app/recommendation_service_swagger.yml:ro
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5004/recommend/top/1/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
-    restart: unless-stopped
-
-  newsfeed_service:
-    build: ./newsfeed_service
-    ports:
-      - "5005:5005"
-    networks:
-      - microservices_network
-    depends_on:
-      user_service:
-        condition: service_healthy
-      watch_history_service:
-        condition: service_healthy
-      movie_service:
-        condition: service_healthy
-    volumes:
-      - ./newsfeed_service/newsfeed_service_swagger.yml:/app/newsfeed_service_swagger.yml:ro
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5005/newsfeed/1/"]
+      test: ["CMD", "curl", "-f", "http://user_service:5001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -181,7 +83,101 @@ services:
       - ./movie_service/Top_10000_Movies_IMDb.csv:/app/Top_10000_Movies_IMDb.csv
       - ./movie_service/movie_service_swagger.yml:/app/movie_service_swagger.yml:ro
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5006/movie/1/"]
+      test: ["CMD", "curl", "-f", "http://movie_service:5006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  watch_history_service:
+    build: ./watch_history_service
+    ports:
+      - "5002:5002"
+    networks:
+      - microservices_network
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@watch_db:5432/watch"
+    depends_on:
+      watch_db:
+        condition: service_healthy
+      user_service:
+        condition: service_started
+      movie_service:
+        condition: service_started
+    volumes:
+      - ./watch_history_service/watch_service_swagger.yml:/app/watch_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://watch_history_service:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  rating_service:
+    build: ./rating_service
+    ports:
+      - "5003:5003"
+    networks:
+      - microservices_network
+    environment:
+      SQLALCHEMY_DATABASE_URI: "postgresql://postgres:postgres@rating_db:5432/ratings"
+    depends_on:
+      rating_db:
+        condition: service_healthy
+      user_service:
+        condition: service_started
+      movie_service:
+        condition: service_started
+    volumes:
+      - ./rating_service/rating_service_swagger.yml:/app/rating_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://rating_service:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  recommendation_service:
+    build: ./recommendation_service
+    ports:
+      - "5004:5004"
+    networks:
+      - microservices_network
+    depends_on:
+      user_service:
+        condition: service_started
+      watch_history_service:
+        condition: service_started
+      rating_service:
+        condition: service_started
+    volumes:
+      - ./recommendation_service/recommendation_service_swagger.yml:/app/recommendation_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://recommendation_service:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  newsfeed_service:
+    build: ./newsfeed_service
+    ports:
+      - "5005:5005"
+    networks:
+      - microservices_network
+    depends_on:
+      user_service:
+        condition: service_started
+      watch_history_service:
+        condition: service_started
+    volumes:
+      - ./newsfeed_service/newsfeed_service_swagger.yml:/app/newsfeed_service_swagger.yml:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://newsfeed_service:5005/health"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -16,18 +16,6 @@ fi
 
 echo "✅ Podman is ready."
 
-# Set up Python virtual environment
-if [ ! -d "$VENV_DIR" ]; then
-    echo "📦 Creating Python virtual environment at $VENV_DIR..."
-    python3 -m venv "$VENV_DIR"
-    source "$VENV_DIR/bin/activate"
-    echo "⬇️ Installing podman-compose..."
-    pip install --upgrade pip
-    pip install podman-compose
-else
-    echo "📂 Activating existing virtual environment at $VENV_DIR..."
-    source "$VENV_DIR/bin/activate"
-fi
 
 # Stop and remove existing containers
 echo "🛑 Stopping and removing existing containers..."
